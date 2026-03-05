@@ -50,8 +50,11 @@ function App() {
 
     setLoading(true);
 
-    const data = await fetchImagesApi(newPage, newQuery);
-    console.log("Images received:", data);
+    try {
+  const data = await fetchImagesApi(newPage, newQuery);
+} catch (error) {
+  console.log("API Error:", error);
+}
 
     // ensure we have an array of items, filter out any falsy entries
     const clean = Array.isArray(data) ? data.filter(Boolean) : [];
