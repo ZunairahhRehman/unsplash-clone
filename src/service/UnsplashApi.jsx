@@ -6,14 +6,14 @@ export const fetchImagesApi = async (page = 1, query = "") => {
       ? `${BASE_URL}/search/photos?page=${page}&query=${query}&per_page=12`
       : `${BASE_URL}/photos?page=${page}&per_page=12`;
 
-    const res = await fetch(url, {
-      headers: {
-        Authorization: `Client-ID kM5N0wGkThOPen4Xfm6mEjUg4vybdKizZqp-WY5A_uE`,
-      },
-    });
+ const res = await fetch(url, {
+  headers: {
+    Authorization: `Client-ID ${import.meta.env.VITE_REACTAPP_KEY}`,
+  },
+});
 
     const data = await res.json();
-    console.log(data); // check response in console
+    console.log(data); 
 
     return query ? data.results : data;
   } catch (err) {
