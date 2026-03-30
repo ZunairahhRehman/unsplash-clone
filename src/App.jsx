@@ -1,11 +1,10 @@
-"API KEY:", import.meta.env.VITE_REACTAPP_KEY;
 import { useEffect, useState } from "react";
 import { Layout, Spin, Modal } from "antd";
 
-import Sidebar from "./component/layout/sidebar";
-import HeaderBar from "./component/layout/header";
-import CategoryBar from "./component/gallery/CategoryBar";
-import ImageGrid from "./component/gallery/ImageGrid";
+import Sidebar from "./Components/Layout/Sidebar";
+import HeaderBar from "./Components/Layout/Header";
+import CategoryBar from "./Components/Gallery/CategoryBar";
+import ImageGrid from "./Components/Gallery/ImageGrid";
 import { fetchImagesApi } from "./service/UnsplashApi";
 import "./app.css";
 const { Content } = Layout;
@@ -43,41 +42,39 @@ function App() {
     setCurrentIndex(newIndex);
     setSelectedImage(images[newIndex]);
   };
-  // core loader which can either replace or append results
   const fetchImages = async (newQuery = "", newPage = 1, append = false) => {
-    // if we've already determined there are no more results, don't fetch again
     if (append && !hasMore) return;
 
     setLoading(true);
-
     try {
-  const data = await fetchImagesApi(newPage, newQuery);
-} catch (error) {
-  console.log("API Error:", error);
-}
+      const data = await fetchImagesApi(newPage, newQuery);
 
-    if (append) {
-      setImages((prev) => {
-        const merged = [...prev, ...clean];
-        const unique = Array.from(
-          new Map(merged.map((i) => [i.id, i])).values(),
-        );
-        return unique;
-      });
-    } else {
-      // new search or category: replace list and scroll to top
-      setImages();
-      try {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } catch (e) {
-        window.scrollTo(0, 0);
+      if (append) {
+        setImages((prev) => {
+          const merged = [...prev, ...data];
+          const unique = Array.from(
+            new Map(merged.map((i) => [i.id, i])).values(),
+          );
+          return unique; 
+        });
+      } else {
+        // new search or category: replace list and scroll to top
+        setImages(data);
+        try {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } catch (e) {
+          window.scrollTo(0, 0);
+        }
       }
-    }
 
-    setPage(newPage);
-    setQuery(newQuery);
-    setHasMore(clean.length > 0);
-    setLoading(false);
+      setPage(newPage);
+      setQuery(newQuery);
+      setHasMore(data.length > 0);
+      setLoading(false);
+    } catch (error) {
+      console.log("API Error:", error);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
